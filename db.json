@@ -1,0 +1,27 @@
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "Renan",
+            "email": "renan@senado.leg.br",
+            "senha": "abc123"
+        },
+        {
+            "id": 2,
+            "nome": "Marcelo",
+            "email": "marcelo@senado.leg.br",
+            "senha": "def456"
+        }
+    ],
+    "demandas": [
+        {
+            "id": 1,
+            "texto": "blabla",
+            "origem": "Cidad\u00e3os",
+            "data_chegada": "12/05/2025",
+            "id_relator": 1,
+            "id_revisor": 2,
+            "status": "pendente de resposta"
+        }
+    ]
+}
