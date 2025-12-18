@@ -1,4 +1,5 @@
 from .usuario import procurando_usuario, usuarios
+from datetime import datetime
 import os, time
 import json
 
@@ -9,6 +10,14 @@ def ler_db():
     arquivo.close()
     return db
 
+#Função para verificação e validação de data
+def data_valida(data):
+    try:
+        return datetime.strptime(data, "%d/%m/%Y")
+    except ValueError:
+        return False
+
+data_atual = datetime.now()
 db = ler_db()
 demandas = db["demandas"]
 id_demanda = 0
@@ -46,7 +55,18 @@ def registrar_demandas():
 
         texto = str(input('Texto:'))
         origem = str(input('Origem do texto:'))
-        data_chegada = str(input('Data texto(31/12/2025):'))
+        while True:
+            data_chegada = str(input('Data do texto (DD/MM/AAAA):'))
+            verificador = data_valida(data_chegada)#chama a função data_valida, que está na linha 14 e vai até 18
+
+            if data_valida(data_chegada):#verifica se tem dados dentro desse campo
+                if verificador > data_atual:#verifica se a data que foi registrada não está no futuro
+                    print("ERRO! Você não pode colocar uma data no futuro")
+                else:#se não estiver, sai do laço
+                    break
+            #verifica se o padrão de data está no padrão brasileiro
+            else:
+                print("Erro! Digitação invalida")
 
     while True:
         # Apresenta uma lista de dicionarios de todos os usuários, para que a pessoa possa saber qual id do usuário ela quer selecionar
@@ -98,13 +118,10 @@ def registrar_demandas():
 
 def exibir_demandas(): #GERANDO BASTANTE PROBLEMAS, DEVIDO O FATO DE PEGAR A FUNÇÃO procurando_usuario
 
-    arquivo = open("db.json", "r")
-    db = json.load(arquivo)
-    #fechar o arquivo aqui
+    db = ler_db()
     demandas = db["demandas"]
 
     if not demandas:
-        arquivo.close()
         print('ERRO! NENHUMA DEMANDA FOI CADASTRADA')
         time.sleep(3)
         os.system('clear')
@@ -122,12 +139,9 @@ def exibir_demandas(): #GERANDO BASTANTE PROBLEMAS, DEVIDO O FATO DE PEGAR A FUN
         print(f"REVISOR: {revisor['nome'] if relator else 'NÃO ENCONTRADO'}")
         print(f"STATUS: {demanda['status']}")
         print(f"=============================\n")
-        arquivo.close()
-
 
 def consultar_demandas():
-    arquivo = open("db.json", "r")
-    db = json.load(arquivo)
+    db = ler_db()
     demandas = db["demandas"]
 
     buscar_demanda = int(input("Informe o id pra procurar uma demanda:"))
@@ -142,7 +156,6 @@ def consultar_demandas():
     
     if not demanda_encontrada:
         print("ERRO: demanda não existe ou foi excluída")
-        arquivo.close()
         time.sleep(3)
         os.system('clear')
         return
@@ -159,12 +172,10 @@ def consultar_demandas():
     print(f"REVISOR: {revisor['nome'] if relator else 'NÃO ENCONTRADO'}")
     print(f"STATUS: {demanda_encontrada['status']}")
     print(f"=============================\n")
-    arquivo.close()
+    
 
 def alterar_demandas():
-    arquivo = open("db.json", "r")
-    db = json.load(arquivo)
-    arquivo.close()
+    db = ler_db()
     demandas = db["demandas"]
 
     for demanda in demandas:
@@ -184,7 +195,19 @@ def alterar_demandas():
         if demanda['id'] == id_demanda:
             demanda['texto'] = input("Novo texto:")
             demanda['origem'] = input("Nova origem:")
-            demanda['data_chegada'] = input("Nova data:")
+            while True:
+                demanda['data_chegada'] = input("Nova data:")
+                verificador = data_valida(demanda['data_chegada'])#chama a função data_valida, que está na linha 14 e vai até 18
+
+                if data_valida(demanda['data_chegada']):#verifica se tem dados dentro desse campo
+                    if verificador > data_atual:#verifica se a data que foi registrada não está no futuro
+                        print("ERRO! Você não pode colocar uma data no futuro")
+                    else:#se não estiver, sai do laço
+                        break
+                    #verifica se o padrão de data está no padrão brasileiro
+                else:
+                    print("Erro! Digitação invalida")
+            
             while True:
 
                 lista_usuarios = db["usuarios"]
