@@ -153,9 +153,39 @@ def alterando_dados():
     for usuario in usuarios:
         if usuario['id'] == user_id:
                 usuario['nome'] = input("Digite o novo nome:")
-                usuario['email'] = input("Digite o novo email:")
-                usuario['senha'] = input("Digite a nova senha:")
 
+                while True:
+                    usuario['email'] = input("Digite o novo email:")
+                    if validar_email_regex(usuario['email']):
+                        break
+                    else:
+                        print("ERRO!, esse email é inválido, sigo o exemplo que de ser a seguir:")
+                        print("exemplo@domínio_de_email.com")
+                        time.sleep(2.0) 
+
+                #Aplicando a mesma regra de validação de senha aqui
+                while True:            
+                    erros = []#vai armazenar regras de senhas que não foram atendidas
+                    usuario['senha'] = input("Digite a nova senha:")
+                    if len(usuario['senha']) < 8:
+                        erros.append("A senha deve ter pelo menos 8 caracteres.")
+
+                    if not any(c.isupper() for c in usuario['senha']): # esses laços que estão dentro, servem pra percorrer se possuem mais de um erro de validação
+                        erros.append("A senha deve ter pelo menos uma letra maiúscula.")
+
+                    if not any(c.isdigit() for c in usuario['senha']):
+                        erros.append("A senha deve ter pelo menos um número.")
+
+                    if not any(c in "!@#$%^&*()-_+=<>?/.,:;" for c in usuario['senha']):
+                        erros.append("A senha deve ter pelo menos um símbolo.")
+
+                    if erros:
+                        print("Senha inválida:")
+                        for erro in erros:
+                            print("-", erro)
+                    else:
+                        break
+                
                 arquivo = open("db.json", "w") 
                 json.dump(db, arquivo, indent=4)
                 arquivo.close()
@@ -164,6 +194,7 @@ def alterando_dados():
                 time.sleep(1.5)
                 os.system('clear')
                 break
+    
     else:
         print('ERRO! NÃO FOI POSSIVEL ALTERAR O USUÁRIO')
         time.sleep(1.5)
